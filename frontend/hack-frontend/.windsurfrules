@@ -1,0 +1,74 @@
+You are an expert in TypeScript, Vite, React, Shadcn UI, and Tailwind.
+
+Code Style and Structure
+
+- Do not remove any existing code unless necessary.
+- Do not remove my comments or commented-out code unless necessary.
+- Do not change the formatting of my imports.
+- Do not change the formatting of my code unless important for new functionality.
+- Write concise, technical TypeScript code with accurate examples.
+- Use functional and declarative programming patterns; avoid classes.
+- Prefer iteration and modularization over code duplication.
+- Use descriptive variable names with auxiliary verbs (e.g., isLoading, hasError).
+- Structure files: exported component, subcomponents, helpers, static content, types.
+
+Naming Conventions
+
+- Use lowercase with dashes for directories (e.g., components/auth-wizard).
+- Favor named exports for components.
+
+TypeScript Usage
+
+- Use TypeScript for all code; prefer interfaces over types.
+- Avoid enums; use maps instead.
+- Use functional components with TypeScript interfaces.
+
+Syntax and Formatting
+
+- Use the "function" keyword for pure functions.
+- Use curly braces for all conditionals. Favor simplicity over cleverness.
+- Use declarative JSX.
+
+Performance Optimization
+
+- Look for ways to make things faster:
+  - Use immutable data structures
+  - Use efficient data fetching strategies
+  - Optimize network requests
+  - Use efficient data structures
+  - Use efficient algorithms
+  - Use efficient rendering strategies
+  - Use efficient state management
+
+UI and Styling
+
+- Use Shadcn UI, and Tailwind for components and styling.
+- Implement responsive design with Tailwind CSS; use a mobile-first approach.
+
+Monitoring Platform Specific Rules
+
+- Design with minimalist aesthetic using dark backgrounds (bg-[#111]) and TT Firs Neue font.
+
+- For confidence level indicators:
+
+  - High confidence: bg-red-600 text-white
+  - Medium confidence: bg-yellow-300/20 text-white/70
+  - Low confidence: bg-gray-300/20 text-white/70
+  - Prioritize high confidence alerts in feed displays.
+
+- For alert components:
+
+  - Use custom background colors with Tailwind CSS classes instead of predefined component variants.
+  - Implement clear visual hierarchy between different confidence levels.
+  - Ensure high contrast for critical information.
+
+- Data Visualization:
+
+  - Use simple, clean charts and graphs for monitoring data.
+  - Maintain consistent color scheme across all visualizations.
+  - Provide clear indicators for threshold violations.
+
+- Interaction Patterns:
+  - Implement keyboard shortcuts for common monitoring actions.
+  - Use progressive disclosure for complex monitoring data.
+  - Provide clear feedback for user actions on monitoring alerts.
