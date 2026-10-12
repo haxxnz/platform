@@ -1,4 +1,4 @@
-import { Project, Event } from '../types';
+import { Project, Event, Attendee } from '../types';
 
 // Mock data for projects
 export const projects: Project[] = [
@@ -134,6 +134,91 @@ export const projects: Project[] = [
   },
 ];
 
+// Mock data for attendees
+export const attendees: Attendee[] = [
+  {
+    id: 1001,
+    name: 'Jordan Smith',
+    email: 'jordan.smith@example.com',
+    status: 'confirmed',
+    registrationDate: '2023-10-05',
+    avatar: 'https://randomuser.me/api/portraits/men/1.jpg'
+  },
+  {
+    id: 1002,
+    name: 'Taylor Johnson',
+    email: 'taylor.johnson@example.com',
+    status: 'registered',
+    registrationDate: '2023-10-07',
+    avatar: 'https://randomuser.me/api/portraits/women/2.jpg'
+  },
+  {
+    id: 1003,
+    name: 'Alex Williams',
+    email: 'alex.williams@example.com',
+    status: 'confirmed',
+    registrationDate: '2023-10-02',
+    avatar: 'https://randomuser.me/api/portraits/men/3.jpg'
+  },
+  {
+    id: 1004,
+    name: 'Morgan Brown',
+    email: 'morgan.brown@example.com',
+    status: 'cancelled',
+    registrationDate: '2023-09-28',
+    avatar: 'https://randomuser.me/api/portraits/women/4.jpg',
+    notes: 'Scheduling conflict'
+  },
+  {
+    id: 1005,
+    name: 'Casey Davis',
+    email: 'casey.davis@example.com',
+    status: 'registered',
+    registrationDate: '2023-10-10',
+    avatar: 'https://randomuser.me/api/portraits/men/5.jpg'
+  },
+  {
+    id: 1006,
+    name: 'Riley Wilson',
+    email: 'riley.wilson@example.com',
+    status: 'confirmed',
+    registrationDate: '2023-09-30',
+    avatar: 'https://randomuser.me/api/portraits/women/6.jpg'
+  },
+  {
+    id: 1007,
+    name: 'Jamie Garcia',
+    email: 'jamie.garcia@example.com',
+    status: 'registered',
+    registrationDate: '2023-10-08',
+    avatar: 'https://randomuser.me/api/portraits/men/7.jpg'
+  },
+  {
+    id: 1008,
+    name: 'Avery Martinez',
+    email: 'avery.martinez@example.com',
+    status: 'confirmed',
+    registrationDate: '2023-10-04',
+    avatar: 'https://randomuser.me/api/portraits/women/8.jpg'
+  },
+  {
+    id: 1009,
+    name: 'Dakota Robinson',
+    email: 'dakota.robinson@example.com',
+    status: 'registered',
+    registrationDate: '2023-10-09',
+    avatar: 'https://randomuser.me/api/portraits/men/9.jpg'
+  },
+  {
+    id: 1010,
+    name: 'Skyler Thompson',
+    email: 'skyler.thompson@example.com',
+    status: 'confirmed',
+    registrationDate: '2023-10-03',
+    avatar: 'https://randomuser.me/api/portraits/women/10.jpg'
+  }
+];
+
 // Mock data for events
 export const events: Event[] = [
   {
@@ -143,6 +228,17 @@ export const events: Event[] = [
     location: 'Tech Campus, Building A',
     description: 'Join us for 48 hours of coding, collaboration, and innovation.',
     image: 'https://images.unsplash.com/photo-1540304453527-62f979142a17?auto=format&fit=crop&q=80&w=400',
+    type: 'hackathon',
+    capacity: 100,
+    organizer: 'Jane Doe',
+    attendees: [
+      attendees[0],
+      attendees[1],
+      attendees[2],
+      attendees[3],
+      attendees[4],
+      attendees[5]
+    ]
   },
   {
     id: 2,
@@ -151,6 +247,15 @@ export const events: Event[] = [
     location: 'Virtual Event',
     description: 'Exploring ethical considerations in artificial intelligence development.',
     image: 'https://images.unsplash.com/photo-1558021212-51b6ecfa0db9?auto=format&fit=crop&q=80&w=400',
+    type: 'workshop',
+    capacity: 50,
+    organizer: 'John Smith',
+    attendees: [
+      attendees[6],
+      attendees[7],
+      attendees[8],
+      attendees[9]
+    ]
   },
   {
     id: 3,
@@ -159,6 +264,16 @@ export const events: Event[] = [
     location: 'Community Center',
     description: 'Showcasing technology projects with positive social impact.',
     image: 'https://images.unsplash.com/photo-1505373877841-8d25f7d46678?auto=format&fit=crop&q=80&w=400',
+    type: 'conference',
+    capacity: 200,
+    organizer: 'Jane Doe',
+    attendees: [
+      attendees[0],
+      attendees[2],
+      attendees[4],
+      attendees[6],
+      attendees[8]
+    ]
   },
 ];
 
@@ -170,4 +285,9 @@ export function getProjectById(id: number): Project | undefined {
 // Helper function to get event by ID
 export function getEventById(id: number): Event | undefined {
   return events.find(event => event.id === id);
+}
+
+// Helper function to get attendee by ID
+export function getAttendeeById(id: number): Attendee | undefined {
+  return attendees.find(attendee => attendee.id === id);
 }

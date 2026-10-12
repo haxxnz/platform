@@ -2,8 +2,11 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { HomePage } from './components/home/HomePage';
 import { ProjectsPage } from './components/projects/ProjectsPage';
 import { ProjectPage } from './components/projects/ProjectPage';
+import { ProjectForm } from './components/projects/ProjectForm';
 import { EventsPage } from './components/events/EventsPage';
 import { EventPage } from './components/events/EventPage';
+import { EventForm } from './components/events/EventForm';
+import { EventAdmin } from './components/events/EventAdmin';
 import { AuthPage } from './components/auth/AuthPage';
 import { AuthProvider } from './contexts/AuthContext';
 
@@ -17,8 +20,13 @@ function App() {
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/events" element={<EventsPage />} />
+              <Route path="/events/new" element={<EventForm />} />
+              <Route path="/events/edit/:id" element={<EventForm />} />
               <Route path="/events/:id" element={<EventPage />} />
+              <Route path="/events/admin/:id" element={<EventAdmin />} />
               <Route path="/projects" element={<ProjectsPage />} />
+              <Route path="/projects/new" element={<ProjectForm />} />
+              <Route path="/projects/edit/:id" element={<ProjectForm />} />
               <Route path="/projects/:id" element={<ProjectPage />} />
               <Route path="/auth" element={<AuthPage />} />
             </Routes>

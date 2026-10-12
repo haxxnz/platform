@@ -20,7 +20,7 @@ export function HomePage() {
         </button>
         
         {/* User status indicator - only visible when authenticated */}
-        <div className="absolute top-4 right-4 z-50 px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm flex items-center">
+        <div className="absolute top-4 right-1/2 z-50 px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm flex items-center">
           <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
           Logged in as {user?.name}
         </div>

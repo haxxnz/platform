@@ -5,7 +5,7 @@ import { projects, events } from '../../data/mockData';
 
 export function Dashboard() {
   const { user } = useAuth();
-  const [activeTab, setActiveTab] = useState<'projects' | 'events'>('projects');
+  const [activeTab, setActiveTab] = useState<'projects' | 'events' | 'hosting'>('projects');
   
   // Mock user projects - in a real app, this would come from an API
   const userProjects = projects.slice(0, 3); // For demo purposes, show first 3 projects as user's
@@ -14,6 +14,9 @@ export function Dashboard() {
   const currentDate = new Date();
   const upcomingEvents = events.filter(event => new Date(event.date) >= currentDate);
   const pastEvents = events.filter(event => new Date(event.date) < currentDate);
+
+  // Get events the user is hosting (for demo purposes, assume user's name is "Jane Doe")
+  const hostedEvents = events.filter(event => event.organizer === "Jane Doe");
 
   // Helper function to determine project status (since it's not in our interface)
   function getProjectStatus(projectId: number): { label: string; className: string } {
@@ -72,7 +75,7 @@ export function Dashboard() {
       </div>
 
       {/* Dashboard stats */}
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 mb-8">
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
         <div className="bg-white overflow-hidden shadow rounded-lg">
           <div className="px-4 py-5 sm:p-6">
             <div className="flex items-center">
@@ -132,6 +135,27 @@ export function Dashboard() {
             </div>
           </div>
         </div>
+
+        <div className="bg-white overflow-hidden shadow rounded-lg">
+          <div className="px-4 py-5 sm:p-6">
+            <div className="flex items-center">
+              <div className="flex-shrink-0 bg-yellow-100 rounded-md p-3">
+                <svg className="h-6 w-6 text-yellow-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
+                </svg>
+              </div>
+              <div className="ml-5 w-0 flex-1">
+                <dl>
+                  <dt className="text-sm font-medium text-gray-500 truncate">Events Hosting</dt>
+                  <dd>
+                    <div className="text-lg font-medium text-gray-900">{hostedEvents.length}</div>
+                  </dd>
+                </dl>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Tabs */}
@@ -156,6 +180,16 @@ export function Dashboard() {
             } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
           >
             Events
+          </button>
+          <button
+            onClick={() => setActiveTab('hosting')}
+            className={`${
+              activeTab === 'hosting'
+                ? 'border-indigo-500 text-indigo-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+          >
+            Hosting
           </button>
         </nav>
       </div>
@@ -200,15 +234,15 @@ export function Dashboard() {
                           {project.contributors.slice(0, 3).map(contributor => (
                             <img 
                               key={contributor.id}
-                              src={contributor.avatar} 
-                              alt={contributor.name} 
-                              className="w-6 h-6 rounded-full border border-white"
+                              className="inline-block h-6 w-6 rounded-full ring-2 ring-white"
+                              src={contributor.avatar}
+                              alt={contributor.name}
                             />
                           ))}
                           {project.contributors.length > 3 && (
-                            <div className="flex items-center justify-center w-6 h-6 rounded-full bg-gray-200 text-xs text-gray-500 border border-white">
+                            <span className="flex items-center justify-center h-6 w-6 rounded-full bg-gray-300 text-xs text-gray-700 ring-2 ring-white">
                               +{project.contributors.length - 3}
-                            </div>
+                            </span>
                           )}
                         </div>
                         <Link
@@ -228,7 +262,7 @@ export function Dashboard() {
               <div className="px-4 py-5 sm:p-6">
                 <h3 className="text-lg leading-6 font-medium text-gray-900">No projects yet</h3>
                 <div className="mt-2 max-w-xl text-sm text-gray-500">
-                  <p>Get started by creating your first project.</p>
+                  <p>You haven't created any projects yet. Start by creating a new project.</p>
                 </div>
                 <div className="mt-5">
                   <Link
@@ -247,160 +281,233 @@ export function Dashboard() {
       {/* Events tab content */}
       {activeTab === 'events' && (
         <div>
-          <div className="mb-8">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold text-gray-900">Upcoming Events</h2>
-              <Link
-                to="/events"
-                className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
-              >
-                View all events
-              </Link>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-semibold text-gray-900">Upcoming Events</h2>
+            <Link
+              to="/events"
+              className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
+            >
+              View all events
+            </Link>
+          </div>
+          
+          {upcomingEvents.length > 0 ? (
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {upcomingEvents.map(event => (
+                <div key={event.id} className="bg-white overflow-hidden shadow rounded-lg">
+                  <div className="h-40 bg-gray-200 overflow-hidden">
+                    <img 
+                      src={event.image || 'https://via.placeholder.com/400x200'} 
+                      alt={event.title} 
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="px-4 py-4">
+                    <div className="flex justify-between items-start">
+                      <h3 className="text-lg font-medium text-gray-900 truncate">{event.title}</h3>
+                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                        isVirtualEvent(event.id) 
+                          ? 'bg-blue-100 text-blue-800' 
+                          : 'bg-green-100 text-green-800'
+                      }`}>
+                        {isVirtualEvent(event.id) ? 'Virtual' : 'In-Person'}
+                      </span>
+                    </div>
+                    <p className="mt-1 text-sm text-gray-500">{event.date}</p>
+                    <p className="mt-1 text-sm text-gray-500 line-clamp-2">{event.description}</p>
+                    <div className="mt-3 flex justify-between items-center">
+                      <div className="text-sm text-gray-500">
+                        <span className="font-medium">{event.attendees?.length || 0}</span> / {event.capacity || getEstimatedAttendees(event.id)} attendees
+                      </div>
+                      <Link
+                        to={`/events/${event.id}`}
+                        className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
+                      >
+                        View details
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
-            
-            {upcomingEvents.length > 0 ? (
-              <div className="space-y-4">
-                {upcomingEvents.map(event => (
-                  <div key={event.id} className="bg-white overflow-hidden shadow rounded-lg">
-                    <div className="px-4 py-4 sm:px-6">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center">
-                          <div className="flex-shrink-0 h-12 w-12 bg-indigo-100 rounded-md flex items-center justify-center">
-                            <svg className="h-6 w-6 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                          </div>
-                          <div className="ml-4">
-                            <h3 className="text-lg font-medium text-gray-900">{event.title}</h3>
-                            <div className="flex items-center text-sm text-gray-500">
-                              <svg className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
-                              </svg>
-                              <span>
-                                {new Date(event.date).toLocaleDateString('en-US', { 
-                                  weekday: 'long',
-                                  month: 'long', 
-                                  day: 'numeric',
-                                  year: 'numeric'
-                                })}
+          ) : (
+            <div className="bg-white shadow sm:rounded-lg">
+              <div className="px-4 py-5 sm:p-6">
+                <h3 className="text-lg leading-6 font-medium text-gray-900">No upcoming events</h3>
+                <div className="mt-2 max-w-xl text-sm text-gray-500">
+                  <p>There are no upcoming events at the moment. Check back later or create your own event.</p>
+                </div>
+                <div className="mt-5">
+                  <Link
+                    to="/events/new"
+                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  >
+                    Create an event
+                  </Link>
+                </div>
+              </div>
+            </div>
+          )}
+          
+          {pastEvents.length > 0 && (
+            <div className="mt-8">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-semibold text-gray-900">Past Events</h2>
+              </div>
+              
+              <div className="bg-white shadow overflow-hidden sm:rounded-md">
+                <ul className="divide-y divide-gray-200">
+                  {pastEvents.map(event => (
+                    <li key={event.id}>
+                      <Link to={`/events/${event.id}`} className="block hover:bg-gray-50">
+                        <div className="px-4 py-4 sm:px-6">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center">
+                              <div className="flex-shrink-0 h-10 w-10 bg-gray-200 rounded-full overflow-hidden">
+                                <img 
+                                  src={event.image || 'https://via.placeholder.com/40x40'} 
+                                  alt={event.title} 
+                                  className="h-full w-full object-cover"
+                                />
+                              </div>
+                              <div className="ml-4">
+                                <div className="text-sm font-medium text-indigo-600">{event.title}</div>
+                                <div className="text-sm text-gray-500">{event.date}</div>
+                              </div>
+                            </div>
+                            <div className="ml-2 flex-shrink-0 flex">
+                              <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                                Past
                               </span>
                             </div>
                           </div>
                         </div>
-                        <div>
-                          <Link
-                            to={`/events/${event.id}`}
-                            className="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                          >
-                            View
-                          </Link>
-                        </div>
-                      </div>
-                      <div className="mt-2 sm:flex sm:justify-between">
-                        <div className="sm:flex">
-                          <div className="flex items-center text-sm text-gray-500">
-                            <svg className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                              <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
-                            </svg>
-                            {event.location}
-                          </div>
-                          <div className="mt-2 flex items-center text-sm text-gray-500 sm:mt-0 sm:ml-6">
-                            <svg className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                              <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
-                            </svg>
-                            {getEstimatedAttendees(event.id)} attendees
-                          </div>
-                        </div>
-                        <div className="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
-                          {isVirtualEvent(event.id) && (
-                            <span className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">
-                              Virtual
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
               </div>
-            ) : (
-              <div className="bg-white shadow sm:rounded-lg">
-                <div className="px-4 py-5 sm:p-6">
-                  <h3 className="text-lg leading-6 font-medium text-gray-900">No upcoming events</h3>
-                  <div className="mt-2 max-w-xl text-sm text-gray-500">
-                    <p>Check back later or create your own event.</p>
-                  </div>
-                  <div className="mt-5">
-                    <Link
-                      to="/events/new"
-                      className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                    >
-                      Create an event
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
+            </div>
+          )}
+        </div>
+      )}
 
-          <div>
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold text-gray-900">Past Events</h2>
-            </div>
-            
-            {pastEvents.length > 0 ? (
-              <div className="space-y-4">
-                {pastEvents.map(event => (
-                  <div key={event.id} className="bg-white overflow-hidden shadow rounded-lg opacity-75">
-                    <div className="px-4 py-4 sm:px-6">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center">
-                          <div className="flex-shrink-0 h-12 w-12 bg-gray-100 rounded-md flex items-center justify-center">
-                            <svg className="h-6 w-6 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                          </div>
-                          <div className="ml-4">
-                            <h3 className="text-lg font-medium text-gray-700">{event.title}</h3>
-                            <div className="flex items-center text-sm text-gray-500">
-                              <svg className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
-                              </svg>
-                              <span>
-                                {new Date(event.date).toLocaleDateString('en-US', { 
-                                  weekday: 'long',
-                                  month: 'long', 
-                                  day: 'numeric',
-                                  year: 'numeric'
-                                })}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                        <div>
-                          <Link
-                            to={`/events/${event.id}`}
-                            className="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-gray-700 bg-gray-100 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
-                          >
-                            View
-                          </Link>
-                        </div>
+      {/* Hosting tab content */}
+      {activeTab === 'hosting' && (
+        <div>
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-semibold text-gray-900">Events You're Hosting</h2>
+            <Link
+              to="/events/new"
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+            >
+              <svg className="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd" />
+              </svg>
+              Create Event
+            </Link>
+          </div>
+          
+          {hostedEvents.length > 0 ? (
+            <div className="space-y-6">
+              {hostedEvents.map(event => (
+                <div key={event.id} className="bg-white overflow-hidden shadow rounded-lg">
+                  <div className="px-4 py-5 sm:px-6 flex justify-between items-center">
+                    <div className="flex items-center">
+                      <div className="flex-shrink-0 h-12 w-12 bg-gray-200 rounded-lg overflow-hidden">
+                        <img 
+                          src={event.image || 'https://via.placeholder.com/48x48'} 
+                          alt={event.title} 
+                          className="h-full w-full object-cover"
+                        />
+                      </div>
+                      <div className="ml-4">
+                        <h3 className="text-lg font-medium text-gray-900">{event.title}</h3>
+                        <p className="text-sm text-gray-500">{event.date} • {event.location}</p>
+                      </div>
+                    </div>
+                    <div className="flex space-x-2">
+                      <Link
+                        to={`/events/admin/${event.id}`}
+                        className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                      >
+                        Manage
+                      </Link>
+                      <Link
+                        to={`/events/${event.id}`}
+                        className="inline-flex items-center px-3 py-1.5 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                      >
+                        View
+                      </Link>
+                    </div>
+                  </div>
+                  <div className="border-t border-gray-200 px-4 py-5 sm:p-6">
+                    <dl className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-3">
+                      <div className="sm:col-span-1">
+                        <dt className="text-sm font-medium text-gray-500">Attendees</dt>
+                        <dd className="mt-1 text-sm text-gray-900">
+                          {event.attendees?.length || 0} / {event.capacity || getEstimatedAttendees(event.id)}
+                        </dd>
+                      </div>
+                      <div className="sm:col-span-1">
+                        <dt className="text-sm font-medium text-gray-500">Type</dt>
+                        <dd className="mt-1 text-sm text-gray-900 capitalize">{event.type || 'Event'}</dd>
+                      </div>
+                      <div className="sm:col-span-1">
+                        <dt className="text-sm font-medium text-gray-500">Status</dt>
+                        <dd className="mt-1 text-sm text-gray-900">
+                          <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                            new Date(event.date) >= currentDate
+                              ? 'bg-green-100 text-green-800'
+                              : 'bg-gray-100 text-gray-800'
+                          }`}>
+                            {new Date(event.date) >= currentDate ? 'Upcoming' : 'Past'}
+                          </span>
+                        </dd>
+                      </div>
+                    </dl>
+                  </div>
+                  <div className="bg-gray-50 px-4 py-4 sm:px-6">
+                    <div className="flex justify-between items-center">
+                      <div className="text-sm">
+                        <Link
+                          to={`/events/edit/${event.id}`}
+                          className="font-medium text-indigo-600 hover:text-indigo-500"
+                        >
+                          Edit event details
+                        </Link>
+                      </div>
+                      <div className="text-sm">
+                        <Link
+                          to={`/events/admin/${event.id}`}
+                          className="font-medium text-indigo-600 hover:text-indigo-500"
+                        >
+                          Manage attendees
+                        </Link>
                       </div>
                     </div>
                   </div>
-                ))}
-              </div>
-            ) : (
-              <div className="bg-white shadow sm:rounded-lg">
-                <div className="px-4 py-5 sm:p-6">
-                  <h3 className="text-lg leading-6 font-medium text-gray-900">No past events</h3>
-                  <div className="mt-2 max-w-xl text-sm text-gray-500">
-                    <p>You haven't attended any events yet.</p>
-                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="bg-white shadow sm:rounded-lg">
+              <div className="px-4 py-5 sm:p-6">
+                <h3 className="text-lg leading-6 font-medium text-gray-900">You're not hosting any events yet</h3>
+                <div className="mt-2 max-w-xl text-sm text-gray-500">
+                  <p>Create an event to start managing attendees and event details.</p>
+                </div>
+                <div className="mt-5">
+                  <Link
+                    to="/events/new"
+                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  >
+                    Create an event
+                  </Link>
                 </div>
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       )}
     </div>

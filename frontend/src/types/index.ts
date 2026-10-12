@@ -17,6 +17,16 @@ export interface Contributor {
   github?: string;
 }
 
+export interface Attendee {
+  id: number;
+  name: string;
+  email: string;
+  status: 'registered' | 'confirmed' | 'attended' | 'cancelled';
+  registrationDate: string;
+  notes?: string;
+  avatar?: string;
+}
+
 export interface Event {
   id: number;
   title: string;
@@ -27,4 +37,7 @@ export interface Event {
   image: string;
   type?: string;
   registrationUrl?: string;
+  attendees?: Attendee[];
+  capacity?: number;
+  organizer?: string; // ID or name of the organizer
 }
